@@ -13,7 +13,6 @@ public:
     void Update(float deltaTime);
 
     void SetPosition(float x, float y, float z);
-    void SetRotation(float pitch, float yaw, float roll);
 
     XMMATRIX GetViewMatrix();
     XMMATRIX GetProjectionMatrix(float aspectRatio);
@@ -21,7 +20,12 @@ public:
 private:
 
     XMFLOAT3 m_position;
-    XMFLOAT3 m_rotation;
+
+    float m_pitch;
+    float m_yaw;
 
     float m_moveSpeed;
+    float m_mouseSensitivity;
+
+    POINT m_lastMousePos;
 };
