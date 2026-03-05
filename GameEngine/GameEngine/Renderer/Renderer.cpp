@@ -215,6 +215,14 @@ bool Renderer::Initialize(HWND hwnd)
 
 void Renderer::Render()
 {
+    static DWORD lastTime = GetTickCount();
+    DWORD currentTime = GetTickCount();
+
+    float deltaTime = (currentTime - lastTime) / 1000.0f;
+
+    lastTime = currentTime;
+
+    m_camera.Update(deltaTime);
     float color[4] = { 0.1f,0.1f,0.3f,1 };
 
     m_context->ClearRenderTargetView(

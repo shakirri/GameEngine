@@ -4,6 +4,8 @@ Camera::Camera()
 {
     m_position = XMFLOAT3(0.0f, 2.0f, -5.0f);
     m_rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+    m_moveSpeed = 5.0f;
 }
 
 void Camera::SetPosition(float x, float y, float z)
@@ -14,6 +16,29 @@ void Camera::SetPosition(float x, float y, float z)
 void Camera::SetRotation(float pitch, float yaw, float roll)
 {
     m_rotation = XMFLOAT3(pitch, yaw, roll);
+}
+
+void Camera::Update(float deltaTime)
+{
+    float speed = m_moveSpeed * deltaTime;
+
+    if (GetAsyncKeyState('W') & 0x8000)
+        m_position.z += speed;
+
+    if (GetAsyncKeyState('S') & 0x8000)
+        m_position.z -= speed;
+
+    if (GetAsyncKeyState('A') & 0x8000)
+        m_position.x -= speed;
+
+    if (GetAsyncKeyState('D') & 0x8000)
+        m_position.x += speed;
+
+    if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+        m_position.y += speed;
+
+    if (GetAsyncKeyState(VK_SHIFT) & 0x8000)
+        m_position.y -= speed;
 }
 
 XMMATRIX Camera::GetViewMatrix()
