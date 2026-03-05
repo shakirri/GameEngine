@@ -1,16 +1,31 @@
+cbuffer ConstantBuffer : register(b0)
+{
+    matrix world;
+    matrix view;
+    matrix projection;
+};
+
 struct VS_INPUT
 {
-    float3 position : POSITION;
+    float3 pos : POSITION;
 };
 
-struct VS_OUTPUT
+struct PS_INPUT
 {
-    float4 position : SV_POSITION;
+    float4 pos : SV_POSITION;
 };
 
-VS_OUTPUT main(VS_INPUT input)
+PS_INPUT main(VS_INPUT input)
 {
-    VS_OUTPUT output;
-    output.position = float4(input.position, 1.0f);
+    PS_INPUT output;
+
+    float4 p = float4(input.pos,1);
+
+    p = mul(p, world);
+    p = mul(p, view);
+    p = mul(p, projection);
+
+    output.pos = p;
+
     return output;
 }
