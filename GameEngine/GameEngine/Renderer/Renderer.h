@@ -10,7 +10,10 @@ public:
     bool Initialize(HWND hwnd);
     void Render();
     void Shutdown();
-
+    struct Vertex
+    {
+        float x, y, z;
+    };
 private:
     ID3D11Device* m_device;
     ID3D11DeviceContext* m_context;
@@ -18,4 +21,8 @@ private:
     ID3D11RenderTargetView* m_renderTargetView;
     ID3D11DepthStencilView* m_depthStencilView;
     ID3D11Texture2D* m_depthStencilBuffer;
+    ID3D11VertexShader* m_vertexShader;
+    ID3D11PixelShader* m_pixelShader;
+    ID3D11InputLayout* m_inputLayout;
+    ID3D11Buffer* m_vertexBuffer;
 };

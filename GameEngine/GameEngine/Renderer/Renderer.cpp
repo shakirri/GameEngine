@@ -1,5 +1,7 @@
 #include "Renderer/Renderer.h"
 #pragma comment(lib, "d3d11.lib")
+#include <d3dcompiler.h>
+#pragma comment(lib, "d3dcompiler.lib")
 
 Renderer::Renderer()
     : m_device(nullptr),
@@ -87,6 +89,102 @@ bool Renderer::Initialize(HWND hwnd)
 
     m_context->RSSetViewports(1, &viewport);
 
+    // === Shader ===
+
+
+    ID3DBlob* vsBlob = nullptr;
+    ID3DBlob* psBlob = nullptr;
+    ID3DBlob* errorBlob = nullptr;
+
+    hr = D3DCompileFromFile(
+        L"Shaders/SimpleVertexShader.hlsl",
+        nullptr,
+        nullptr,
+        "main",
+        "vs_5_0",
+        0,
+        0,
+        &vsBlob,
+        &errorBlob
+    );
+
+    if (FAILED(hr))
+    {
+        if (errorBlob)
+        {
+            OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+        }
+        return false;
+    }
+
+    hr = D3DCompileFromFile(
+        L"Shaders/SimplePixelShader.hlsl",
+        nullptr,
+        nullptr,
+        "main",
+        "ps_5_0",
+        0,
+        0,
+        &psBlob,
+        &errorBlob
+    );
+
+    if (FAILED(hr))
+    {
+        if (errorBlob)
+        {
+            OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+        }
+        return false;
+    }
+
+    m_device->CreateVertexShader(
+        vsBlob->GetBufferPointer(),
+        vsBlob->GetBufferSize(),
+        nullptr,
+        &m_vertexShader
+    );
+
+    m_device->CreatePixelShader(
+        psBlob->GetBufferPointer(),
+        psBlob->GetBufferSize(),
+        nullptr,
+        &m_pixelShader
+    );
+
+    // === Input Layout ===
+    D3D11_INPUT_ELEMENT_DESC layout[] =
+    {
+        { "POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 }
+    };
+
+    m_device->CreateInputLayout(
+        layout,
+        1,
+        vsBlob->GetBufferPointer(),
+        vsBlob->GetBufferSize(),
+        &m_inputLayout
+    );
+
+    m_context->IASetInputLayout(m_inputLayout);
+
+    // === Vertex Buffer ===
+    Vertex vertices[] =
+    {
+        { 0.0f,  0.5f, 0.0f },
+        { 0.5f, -0.5f, 0.0f },
+        {-0.5f, -0.5f, 0.0f }
+    };
+
+    D3D11_BUFFER_DESC bufferDesc = {};
+    bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+    bufferDesc.ByteWidth = sizeof(vertices);
+    bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+    D3D11_SUBRESOURCE_DATA data = {};
+    data.pSysMem = vertices;
+
+    m_device->CreateBuffer(&bufferDesc, &data, &m_vertexBuffer);
     return true;
 }
 
@@ -102,6 +200,17 @@ void Renderer::Render()
         1.0f,
         0
     );
+
+    UINT stride = sizeof(Vertex);
+    UINT offset = 0;
+
+    m_context->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
+    m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    m_context->VSSetShader(m_vertexShader, nullptr, 0);
+    m_context->PSSetShader(m_pixelShader, nullptr, 0);
+
+    m_context->Draw(3, 0);
 
     m_swapChain->Present(1, 0);
 }
