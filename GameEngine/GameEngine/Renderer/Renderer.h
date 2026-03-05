@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include "Core/Camera.h"
 
 using namespace DirectX;
 
@@ -44,4 +45,6 @@ private:
 
     ID3D11Buffer* m_vertexBuffer;
     ID3D11Buffer* m_constantBuffer;
+
+    Camera m_camera;
 };

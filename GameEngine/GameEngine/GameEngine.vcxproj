@@ -126,6 +126,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Core\Application.h" />
+    <ClInclude Include="Core\Camera.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameEngine.h" />
     <ClInclude Include="Platform\Window.h" />
@@ -135,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Application.cpp" />
+    <ClCompile Include="Core\Camera.cpp" />
     <ClCompile Include="GameEngine.cpp" />
     <ClCompile Include="Platform\Window.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />

@@ -236,17 +236,10 @@ void Renderer::Render()
         (float)GetTickCount64() * 0.001f
     );
 
-    cb.view = XMMatrixLookAtLH(
-        XMVectorSet(0, 2, -5, 1),
-        XMVectorSet(0, 0, 0, 1),
-        XMVectorSet(0, 1, 0, 0)
-    );
+    cb.view = m_camera.GetViewMatrix();
 
-    cb.projection = XMMatrixPerspectiveFovLH(
-        XM_PIDIV4,
-        1280.0f / 720.0f,
-        0.1f,
-        100
+    cb.projection = m_camera.GetProjectionMatrix(
+        1280.0f / 720.0f
     );
 
     cb.world = XMMatrixTranspose(cb.world);
